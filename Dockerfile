@@ -3,8 +3,8 @@ FROM centos:centos6
 
 MAINTAINER Manuel Vacelet, manuel.vacelet@enalean.com
 
-RUN rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt
-RUN rpm -i http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+RUN rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt && \
+    rpm -i http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 
 COPY rpmforge.repo /etc/yum.repos.d/
 COPY Tuleap.repo /etc/yum.repos.d/
@@ -36,7 +36,8 @@ RUN sed -i '/session    required     pam_loginuid.so/c\#session    required     
     sed -i '/session    required   pam_loginuid.so/c\#session    required   pam_loginuid.so' /etc/pam.d/crond
 
 # Need to depend on tuleap-core-cvs
-RUN /sbin/service sshd start && yum install -y --enablerepo=rpmforge-extras \
+RUN /sbin/service sshd start && \
+    yum install -y --enablerepo=rpmforge-extras \
     tuleap-install \
     tuleap-core-cvs \
     tuleap-core-subversion \
@@ -48,9 +49,8 @@ RUN /sbin/service sshd start && yum install -y --enablerepo=rpmforge-extras \
     tuleap-documentation \
     tuleap-customization-default \
     restler-api-explorer; \
-    yum clean all
-
-RUN pip install pip --upgrade ; pip install supervisor
+    yum clean all && \ 
+    pip install pip --upgrade ; pip install supervisor
 
 COPY supervisord.conf /etc/supervisord.conf
 
