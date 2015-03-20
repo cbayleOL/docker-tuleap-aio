@@ -49,7 +49,7 @@ RUN /sbin/service sshd start && \
     tuleap-documentation \
     tuleap-customization-default \
     restler-api-explorer; \
-    yum clean all && \ 
+    yum clean all && \
     pip install pip --upgrade ; pip install supervisor
 
 COPY supervisord.conf /etc/supervisord.conf
