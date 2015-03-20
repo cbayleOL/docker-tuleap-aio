@@ -26,8 +26,49 @@ cd /usr/share/tuleap
 done
 popd > /dev/null
 
+DB_HOST=${DB_PORT_3306_TCP_ADDR:-${DB_HOST}}
+DB_HOST=${DB_1_PORT_3306_TCP_ADDR:-${DB_HOST}}
+DB_PORT=${DB_PORT_3306_TCP_PORT:-${DB_PORT}}
+DB_PORT=${DB_1_PORT_3306_TCP_PORT:-${DB_PORT}}
+
+if [ "$DB_PASS" = "**ChangeMe**" ] && [ -n "$DB_1_ENV_MYSQL_PASS" ]; then
+    DB_PASS="$DB_1_ENV_MYSQL_PASS"
+fi
+
+echo "=> Trying to connect to MySQL/MariaDB using:"
+echo "========================================================================"
+echo "      Database Host Address:  $DB_HOST"
+echo "      Database Port number:   $DB_PORT"
+echo "      Database Name:          $DB_NAME"
+echo "      Database Username:      $DB_USER"
+echo "      Database Password:      $DB_PASS"
+echo "========================================================================"
+
+for ((i=0;i<10;i++))
+do
+    DB_CONNECTABLE=$(mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'status' >/dev/null 2>&1; echo "$?")
+    if [[ DB_CONNECTABLE -eq 0 ]]; then
+        break
+    fi
+    sleep 5
+done
+
+if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
+    echo "Cannot connect to database"
+    exit $DB_CONNECTABLE
+fi
+
 # Install Tuleap
-bash ./setup.sh --disable-selinux --sys-default-domain=$VIRTUAL_HOST --sys-org-name=Tuleap --sys-long-org-name=Tuleap
+# if DB_HOST is defined (non zero)
+if [ -n "$DB_HOST" ]
+then
+	bash ./setup.sh --disable-selinux --sys-default-domain=$VIRTUAL_HOST \
+	--sys-org-name=Tuleap --sys-long-org-name=Tuleap \
+	--mysql-host=$DB_HOST --mysql-root-password=$DB_PASS --mysql-httpd-host='%'
+else
+	bash ./setup.sh --disable-selinux --sys-default-domain=$VIRTUAL_HOST \
+	--sys-org-name=Tuleap --sys-long-org-name=Tuleap
+fi
 
 # Setting root password
 root_passwd=$(generate_passwd)
