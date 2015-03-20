@@ -34,6 +34,7 @@ then
 	bash ./setup.sh --disable-selinux --sys-default-domain=$VIRTUAL_HOST \
 	--sys-org-name=Tuleap --sys-long-org-name=Tuleap \
 	--mysql-host=$DB_HOST --mysql-root-password=$DB_PASS --mysql-httpd-host='%'
+	cp /etc/supervisord-nodb.conf /etc/supervisord.conf
 else
 	bash ./setup.sh --disable-selinux --sys-default-domain=$VIRTUAL_HOST \
 	--sys-org-name=Tuleap --sys-long-org-name=Tuleap

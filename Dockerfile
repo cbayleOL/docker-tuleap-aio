@@ -53,6 +53,7 @@ RUN /sbin/service sshd start && \
     pip install pip --upgrade ; pip install supervisor
 
 COPY supervisord.conf /etc/supervisord.conf
+COPY supervisord-nodb.conf /etc/supervisord-nodb.conf
 
 COPY . /root/app
 
