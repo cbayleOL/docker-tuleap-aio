@@ -56,6 +56,8 @@ done
 if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
     echo "Cannot connect to database"
     exit $DB_CONNECTABLE
+else
+    echo "Connect to database succeded"
 fi
 
 # Install Tuleap
