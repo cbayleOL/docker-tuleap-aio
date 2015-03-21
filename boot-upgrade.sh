@@ -3,10 +3,18 @@
 set -e
 
 # Starts the DB and upgrade the data
+db_pass=$(egrep '^\$sys_dbpasswd' /etc/tuleap/conf/database.inc | sed -e 's/^\$sys_dbpasswd="\(.*\)";$/\1/')
+db_host=$(egrep '^\$sys_dbhost' /etc/tuleap/conf/database.inc | sed -e 's/^\$sys_dbhost="\(.*\)";$/\1/')
+if [ "$db_host" == "localhost" ]
+then
+	host_string=""
+else
+	host_string="-h $db_host"
+fi
 echo "Start mysql"
 /usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe &
 sleep 1
-while ! mysql -ucodendiadm -p$(egrep '^\$sys_dbpasswd' /etc/tuleap/conf/database.inc | sed -e 's/^\$sys_dbpasswd="\(.*\)";$/\1/') -e "show databases" >/dev/null; do 
+while ! mysql -ucodendiadm -p$db_pass $host_string -e "show databases" >/dev/null; do 
     echo "Wait for the db";
     sleep 1
 done
