@@ -26,10 +26,13 @@ done
 /usr/share/tuleap/src/utils/php-launcher.sh /usr/share/tuleap/src/utils/launch_system_check.php
 
 # Stop Mysql
-echo "Stop mysql"
-PID=$(cat /var/run/mysqld/mysqld.pid)
-kill -15 $PID
-while ps -p $PID >/dev/null 2>&1; do
-    echo "Waiting for mysql ($PID) to stop"
-    sleep 1
-done
+if [ "$db_host" == "localhost" ]
+then
+	echo "Stop mysql"
+	PID=$(cat /var/run/mysqld/mysqld.pid)
+	kill -15 $PID
+	while ps -p $PID >/dev/null 2>&1; do
+    		echo "Waiting for mysql ($PID) to stop"
+    		sleep 1
+	done
+fi
