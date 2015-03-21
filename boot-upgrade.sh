@@ -8,12 +8,14 @@ db_host=$(egrep '^\$sys_dbhost' /etc/tuleap/conf/database.inc | sed -e 's/^\$sys
 if [ "$db_host" == "localhost" ]
 then
 	host_string=""
+	echo "Start mysql"
+	/usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe &
 else
 	host_string="-h $db_host"
 	cp /etc/supervisord-nodb.conf /etc/supervisord.conf
 fi
-echo "Start mysql"
-/usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe &
+
+echo "Wait mysql"
 sleep 1
 while ! mysql -ucodendiadm -p$db_pass $host_string -e "show databases" >/dev/null; do 
     echo "Wait for the db";
