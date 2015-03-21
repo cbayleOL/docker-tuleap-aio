@@ -40,4 +40,4 @@ fi
 # Activate backend/crontab
 /etc/init.d/tuleap start
 
-exec supervisord -n
+exec supervisord -n -c /etc/supervisord.conf
