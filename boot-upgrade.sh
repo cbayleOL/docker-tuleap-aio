@@ -10,6 +10,7 @@ then
 	host_string=""
 else
 	host_string="-h $db_host"
+	cp /etc/supervisord-nodb.conf /etc/supervisord.conf
 fi
 echo "Start mysql"
 /usr/bin/pidproxy /var/run/mysqld/mysqld.pid /usr/bin/mysqld_safe &
